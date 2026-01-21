@@ -80,7 +80,7 @@ export default function LoginPage() {
                             </div>
 
                             <div className="relative">
-                                <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
+                                <Mail className="absolute left-3 top-3 h-4 w-4 text-black" />
                                 <input
                                     id="email"
                                     type="email"
@@ -88,7 +88,7 @@ export default function LoginPage() {
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     placeholder="name@example.com"
-                                    className="w-full bg-black/20 border border-white/10 rounded-lg px-10 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
+                                    className="w-full bg-white border border-gray-400 rounded-lg px-10 py-2.5 text-sm text-black placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
                                 />
                             </div>
                         </div>
@@ -99,14 +99,14 @@ export default function LoginPage() {
                             </div>
 
                             <div className="relative">
-                                <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
+                                <Lock className="absolute left-3 top-3 h-4 w-4 text-black" />
                                 <input
                                     id="password"
                                     type={showPassword ? "text" : "password"}
                                     required
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    className="w-full bg-black/20 border border-white/10 rounded-lg px-10 py-2.5 pr-10 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
+                                    className="w-full bg-white border border-gray-400 rounded-lg px-10 py-2.5 pr-10 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
                                 />
                                 <button
                                     type="button"

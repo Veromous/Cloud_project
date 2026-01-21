@@ -77,7 +77,7 @@ function ResetPasswordContent() {
                         <h1 className="text-2xl font-bold text-black">
                             Reset Password
                         </h1>
-                        <p className="text-sm text-gray-600 mt-2 text-center">
+                        <p className="text-sm text-black mt-2 text-center">
                             Enter the code sent to <span className="font-medium">{email}</span>
                         </p>
                     </div>
@@ -95,11 +95,11 @@ function ResetPasswordContent() {
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div className="space-y-2">
                                 <div className="flex flex-col">
-                                    <label className="text-gray-900 font-semibold">Verification Code</label>
+                                    <label className="text-black font-semibold">Verification Code</label>
                                 </div>
 
                                 <div className="relative">
-                                    <Key className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
+                                    <Key className="absolute left-3 top-3 h-4 w-4 text-black" />
                                     <input
                                         id="code"
                                         type="text"
@@ -108,7 +108,7 @@ function ResetPasswordContent() {
                                         onChange={(e) => setCode(e.target.value)}
                                         placeholder="Enter 6-digit code"
                                         maxLength={6}
-                                        className="w-full bg-black/20 border border-white/10 rounded-lg px-10 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
+                                        className="w-full bg-white border border-gray-400 rounded-lg px-10 py-2.5 text-sm text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
                                     />
                                 </div>
                             </div>
@@ -119,7 +119,7 @@ function ResetPasswordContent() {
                                 </div>
 
                                 <div className="relative">
-                                    <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
+                                    <Lock className="absolute left-3 top-3 h-4 w-4 text-black" />
                                     <input
                                         id="newPassword"
                                         type={showPassword ? "text" : "password"}
@@ -127,7 +127,7 @@ function ResetPasswordContent() {
                                         value={newPassword}
                                         onChange={(e) => setNewPassword(e.target.value)}
                                         placeholder="Min. 8 characters"
-                                        className="w-full bg-black/20 border border-white/10 rounded-lg px-10 py-2.5 pr-10 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
+                                        className="w-full bg-white border border-gray-400 rounded-lg px-10 py-2.5 pr-10 text-sm text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
                                     />
                                     <button
                                         type="button"
@@ -135,9 +135,9 @@ function ResetPasswordContent() {
                                         className="absolute right-3 top-3 text-gray-500 hover:text-gray-300 transition-colors"
                                     >
                                         {showPassword ? (
-                                            <EyeOff className="h-4 w-4" />
+                                            <EyeOff className="h-4 w-4 text-black" />
                                         ) : (
-                                            <Eye className="h-4 w-4" />
+                                            <Eye className="h-4 w-4 text-black" />
                                         )}
                                     </button>
                                 </div>
@@ -152,7 +152,7 @@ function ResetPasswordContent() {
                                 </div>
 
                                 <div className="relative">
-                                    <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
+                                    <Lock className="absolute left-3 top-3 h-4 w-4 text-black" />
                                     <input
                                         id="confirmPassword"
                                         type={showConfirmPassword ? "text" : "password"}
@@ -160,7 +160,7 @@ function ResetPasswordContent() {
                                         value={confirmPassword}
                                         onChange={(e) => setConfirmPassword(e.target.value)}
                                         placeholder="Re-enter password"
-                                        className="w-full bg-black/20 border border-white/10 rounded-lg px-10 py-2.5 pr-10 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
+                                        className="w-full bg-white border border-gray-400 rounded-lg px-10 py-2.5 pr-10 text-sm text-balck placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
                                     />
                                     <button
                                         type="button"
@@ -168,9 +168,9 @@ function ResetPasswordContent() {
                                         className="absolute right-3 top-3 text-gray-500 hover:text-gray-300 transition-colors"
                                     >
                                         {showConfirmPassword ? (
-                                            <EyeOff className="h-4 w-4" />
+                                            <EyeOff className="h-4 w-4 text-black" />
                                         ) : (
-                                            <Eye className="h-4 w-4" />
+                                            <Eye className="h-4 w-4 text-black" />
                                         )}
                                     </button>
                                 </div>
@@ -193,7 +193,7 @@ function ResetPasswordContent() {
                     )}
 
                     <div className="text-center text-black text-sm mt-4">
-                        Remember your password?{" "}
+                        Remembered your password?{" "}
                         <Link href="/login" className="text-blue-500 hover:text-blue-600 transition-colors font-medium">
                             Sign in
                         </Link>

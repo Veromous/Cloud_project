@@ -67,11 +67,11 @@ export default function ForgotPasswordPage() {
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div className="space-y-2">
                                 <div className="flex flex-col">
-                                    <label className="text-gray-900 font-semibold">Email Address</label>
+                                    <label className="text-black font-semibold">Email Address</label>
                                 </div>
 
                                 <div className="relative">
-                                    <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
+                                    <Mail className="absolute left-3 top-3 h-4 w-4 text-black" />
                                     <input
                                         id="email"
                                         type="email"
@@ -79,7 +79,7 @@ export default function ForgotPasswordPage() {
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
                                         placeholder="name@example.com"
-                                        className="w-full bg-black/20 border border-white/10 rounded-lg px-10 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
+                                        className="w-full bg-white border border-gray-400 rounded-lg px-10 py-2.5 text-sm text-black placeholder-gray focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
                                     />
                                 </div>
                             </div>

@@ -3,12 +3,16 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, UserPlus, Mail, Lock } from "lucide-react";
+import { ArrowLeft, UserPlus, Mail, Lock, User, Eye, EyeOff } from "lucide-react";
 import { authService } from "@/lib/auth";
 
 export default function RegisterPage() {
+    const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState(false);
@@ -18,6 +22,20 @@ export default function RegisterPage() {
         e.preventDefault();
         setLoading(true);
         setError("");
+
+        // Validate passwords match
+        if (password !== confirmPassword) {
+            setError("Passwords do not match");
+            setLoading(false);
+            return;
+        }
+
+        // Validate password strength
+        if (password.length < 8) {
+            setError("Password must be at least 8 characters");
+            setLoading(false);
+            return;
+        }
 
         try {
             const result = await authService.register({ email, password });
@@ -40,8 +58,9 @@ export default function RegisterPage() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-background">
-            <div className="absolute inset-0 bg-violet-500/5 blur-[100px] rounded-full bottom-1/4 right-1/4 w-[400px] h-[400px]" />
+        <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-black">
+
+            <div className="absolute inset-0 bg-white blur-[100px] rounded-full bottom-1/4 right-1/4 w-[300px] h-[300px]" />
 
             <div className="relative z-10 w-full max-w-md p-6">
                 <Link href="/" className="inline-flex items-center text-sm text-muted-foreground hover:text-white mb-6 transition-colors">
@@ -49,15 +68,12 @@ export default function RegisterPage() {
                     Back to Home
                 </Link>
 
-                <div className="bg-white/5 border border-white/10 backdrop-blur-xl rounded-2xl p-8 shadow-xl">
+                <div className="bg-white w-[450px] border border-white/10 backdrop-blur-xl rounded-2xl p-8 shadow-xl">
                     <div className="flex flex-col items-center mb-8">
-                        <div className="p-3 bg-violet-500/10 rounded-full mb-4">
-                            <UserPlus className="h-6 w-6 text-violet-400" />
-                        </div>
-                        <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
+                        <h1 className="text-2xl font-bold text-black">
                             Create Account
                         </h1>
-                        <p className="text-sm text-muted-foreground mt-2">
+                        <p className="text-xl text-muted-foreground mt-2 text-black">
                             Start analyzing sentiment today
                         </p>
                     </div>
@@ -71,9 +87,29 @@ export default function RegisterPage() {
                     ) : (
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div className="space-y-2">
-                                <label className="text-sm font-medium text-gray-300" htmlFor="email">Email</label>
+                                <div className="flex flex-col">
+                                    <label className="text-gray-900 font-semibold">Full Name</label>
+                                </div>
                                 <div className="relative">
-                                    <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
+                                    <User className="absolute left-3 top-3 h-4 w-4 text-black" />
+                                    <input
+                                        id="name"
+                                        type="text"
+                                        required
+                                        value={name}
+                                        onChange={(e) => setName(e.target.value)}
+                                        placeholder="John Doe"
+                                        className="w-full bg-white border border-gray-400 rounded-lg px-10 py-2.5 text-sm text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-300 transition-all"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="space-y-2">
+                                <div className="flex flex-col">
+                                    <label className="text-gray-900 font-semibold">Email</label>
+                                </div>
+                                <div className="relative">
+                                    <Mail className="absolute left-3 top-3 h-4 w-4 text-black" />
                                     <input
                                         id="email"
                                         type="email"
@@ -81,27 +117,70 @@ export default function RegisterPage() {
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
                                         placeholder="name@example.com"
-                                        className="w-full bg-black/20 border border-white/10 rounded-lg px-10 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-violet-500/50 transition-all"
+                                        className="w-full bg-white border border-gray-400 rounded-lg px-10 py-2.5 text-sm text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-300 transition-all"
                                     />
                                 </div>
                             </div>
+
                             <div className="space-y-2">
-                                <label className="text-sm font-medium text-gray-300" htmlFor="password">Password</label>
+                                <div className="flex flex-col">
+                                    <label className="text-black font-semibold">Password</label>
+                                </div>
                                 <div className="relative">
-                                    <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
+                                    <Lock className="absolute left-3 top-3 h-4 w-4 text-black" />
                                     <input
                                         id="password"
-                                        type="password"
+                                        type={showPassword ? "text" : "password"}
                                         required
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
                                         placeholder="Min. 8 characters"
-                                        className="w-full bg-black/20 border border-white/10 rounded-lg px-10 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-violet-500/50 transition-all"
+                                        className="w-full bg-white border border-gray-400 rounded-lg px-10 py-2.5 pr-10 text-sm text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-300 transition-all"
                                     />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="absolute right-3 top-3 text-gray-500 hover:text-gray-300 transition-colors"
+                                    >
+                                        {showPassword ? (
+                                            <EyeOff className="h-4 w-4 text-gray-900" />
+                                        ) : (
+                                            <Eye className="h-4 w-4 text-gray-900" />
+                                        )}
+                                    </button>
                                 </div>
-                                <p className="text-xs text-gray-500">
+                                <p className="text-sm text-blue-400">
                                     Must contain uppercase, lowercase, and numbers
                                 </p>
+                            </div>
+
+                            <div className="space-y-2">
+                                <div className="flex flex-col">
+                                    <label className="text-black font-semibold">Confirm Password</label>
+                                </div>
+                                <div className="relative">
+                                    <Lock className="absolute left-3 top-3 h-4 w-4 text-black" />
+                                    <input
+                                        id="confirmPassword"
+                                        type={showConfirmPassword ? "text" : "password"}
+                                        required
+                                        value={confirmPassword}
+                                        onChange={(e) => setConfirmPassword(e.target.value)}
+                                        placeholder="Re-enter password"
+                                        className="w-full bg-white border border-gray-400 rounded-lg px-10 py-2.5 pr-10 text-sm text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-300 transition-all"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                        className="absolute right-3 top-3 text-gray-500 hover:text-gray-300 transition-colors"
+                                    >
+                                        {showConfirmPassword ? (
+                                            <EyeOff className="h-4 w-4 text-gray-900" />
+                                        ) : (
+                                            <Eye className="h-4 w-4 text-gray-900" />
+                                        )}
+                                    </button>
+                                </div>
                             </div>
 
                             {error && (
@@ -113,16 +192,16 @@ export default function RegisterPage() {
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="w-full bg-violet-600 hover:bg-violet-500 text-white font-medium py-2.5 rounded-lg shadow-lg shadow-violet-500/20 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="w-full mb-2.5 bg-gray-900 hover:bg-blue-500 text-white font-medium py-2.5 rounded-lg shadow-lg shadow-violet-500/20 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 {loading ? "Creating Account..." : "Sign Up Free"}
                             </button>
                         </form>
                     )}
 
-                    <div className="mt-6 text-center text-sm text-muted-foreground">
+                    <div className="mt-6 text-center text-sm text-black">
                         Already have an account?{" "}
-                        <Link href="/login" className="text-violet-400 hover:text-violet-300 transition-colors">
+                        <Link href="/login" className="text-blue-600 hover:text-blue-500 transition-colors">
                             Sign in
                         </Link>
                     </div>
