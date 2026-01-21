@@ -87,10 +87,16 @@ export const authService = {
      */
     async getCurrentUser() {
         try {
+            const { fetchUserAttributes } = await import('aws-amplify/auth');
             const user = await getCurrentUser();
+            const attributes = await fetchUserAttributes();
+
             return {
                 success: true,
                 user,
+                email: attributes.email,
+                name: attributes.name,
+                attributes,
             };
         } catch (error: any) {
             return {

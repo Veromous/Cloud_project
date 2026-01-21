@@ -1,16 +1,18 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Facebook, Youtube, Video, Trash2, ExternalLink, Music2 } from "lucide-react";
+import { Plus, Facebook, Youtube, Video, Trash2, ExternalLink, Music2, RefreshCw } from "lucide-react";
+import toast, { Toaster } from 'react-hot-toast';
 
 export default function LinksPage() {
     const [links, setLinks] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [syncing, setSyncing] = useState<string | null>(null);
 
     // Fetch links from backend
     const fetchLinks = async () => {
         try {
-            const res = await fetch("http://localhost:3001/api/links");
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/links`);
             if (res.ok) {
                 const data = await res.json();
                 setLinks(data);
@@ -37,16 +39,108 @@ export default function LinksPage() {
         else if (newUrl.includes("tiktok")) platform = "tiktok";
 
         try {
-            const res = await fetch("http://localhost:3001/api/links", {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/links`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ platform, url: newUrl })
             });
+
             if (res.ok) {
                 fetchLinks(); // Refresh list
+                toast.success("Link added successfully!");
+            } else {
+                const errorData = await res.json();
+                toast.error(`Failed to add link: ${errorData.error || 'Unknown error'}`);
             }
-        } catch (err) {
-            alert("Failed to add link");
+        } catch (err: any) {
+            console.error("Add link error:", err);
+            toast.error(`Failed to add link: ${err.message}`);
+        }
+    };
+
+    const handleDeleteLink = async (linkId: string) => {
+        const deletePromise = new Promise(async (resolve, reject) => {
+            try {
+                console.log('Attempting to delete link:', linkId);
+                console.log('API URL:', process.env.NEXT_PUBLIC_API_URL);
+
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/links/${linkId}`, {
+                    method: "DELETE"
+                });
+
+                console.log('Delete response status:', res.status);
+                console.log('Delete response ok:', res.ok);
+
+                if (res.ok) {
+                    const data = await res.json();
+                    console.log('Delete response data:', data);
+                    fetchLinks(); // Refresh list
+                    resolve("Link deleted successfully!");
+                } else {
+                    const errorText = await res.text();
+                    console.error('Delete failed with status:', res.status);
+                    console.error('Error response:', errorText);
+                    reject(new Error(`Failed to delete link: ${res.status} - ${errorText}`));
+                }
+            } catch (err) {
+                console.error("Delete link error:", err);
+                reject(err);
+            }
+        });
+
+        toast.promise(deletePromise, {
+            loading: 'Deleting link...',
+            success: 'Link deleted successfully!',
+            error: (err) => `Failed to delete: ${err.message}`,
+        });
+    };
+
+    const handleSyncComments = async (link: any) => {
+        if (link.platform !== "tiktok") {
+            toast.error("Comment syncing is currently only available for TikTok links");
+            return;
+        }
+
+        setSyncing(link.id);
+
+        try {
+            // Extract username from TikTok URL
+            const usernameMatch = link.url.match(/@([a-zA-Z0-9_.]+)/);
+            const username = usernameMatch ? usernameMatch[1] : null;
+
+            if (!username) {
+                toast.error("Could not extract username from TikTok URL");
+                setSyncing(null);
+                return;
+            }
+
+            const syncPromise = fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/tiktok/scrape`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    username,
+                    videoLimit: 5,
+                    commentLimit: 20
+                })
+            }).then(async (res) => {
+                if (res.ok) {
+                    const data = await res.json();
+                    return `Successfully synced ${data.count} comments from @${username}!`;
+                } else {
+                    const errorData = await res.json();
+                    throw new Error(errorData.message || 'Unknown error');
+                }
+            });
+
+            await toast.promise(syncPromise, {
+                loading: `Syncing comments from @${username}...`,
+                success: (msg) => msg,
+                error: (err) => `Failed to sync: ${err.message}`,
+            });
+        } catch (err: any) {
+            console.error("Sync comments error:", err);
+        } finally {
+            setSyncing(null);
         }
     };
 
@@ -61,6 +155,7 @@ export default function LinksPage() {
 
     return (
         <div className="space-y-6">
+            <Toaster position="top-right" />
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-2xl font-bold tracking-tight">Social Media Links</h1>
@@ -88,7 +183,7 @@ export default function LinksPage() {
                         </thead>
                         <tbody className="divide-y divide-white/5">
                             {loading ? (
-                                <tr><td colSpan={4} className="p-6 text-center text-muted-foreground">Loading specific links...</td></tr>
+                                <tr><td colSpan={4} className="p-6 text-center text-muted-foreground">Loading links...</td></tr>
                             ) : links.map((link) => (
                                 <tr key={link.id} className="hover:bg-white/5 transition-colors">
                                     <td className="px-6 py-4 flex items-center gap-3">
@@ -104,9 +199,25 @@ export default function LinksPage() {
                                         {link.date}
                                     </td>
                                     <td className="px-6 py-4 text-right">
-                                        <button className="p-2 hover:bg-red-500/10 hover:text-red-400 rounded-lg transition-colors text-gray-500">
-                                            <Trash2 className="h-4 w-4" />
-                                        </button>
+                                        <div className="flex items-center justify-end gap-2">
+                                            {link.platform === "tiktok" && (
+                                                <button
+                                                    onClick={() => handleSyncComments(link)}
+                                                    disabled={syncing === link.id}
+                                                    className="p-2 hover:bg-blue-500/10 hover:text-blue-400 rounded-lg transition-colors text-gray-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                                                    title="Sync Comments"
+                                                >
+                                                    <RefreshCw className={`h-4 w-4 ${syncing === link.id ? 'animate-spin' : ''}`} />
+                                                </button>
+                                            )}
+                                            <button
+                                                onClick={() => handleDeleteLink(link.id)}
+                                                className="p-2 hover:bg-red-500/10 hover:text-red-400 rounded-lg transition-colors text-gray-500"
+                                                title="Delete Link"
+                                            >
+                                                <Trash2 className="h-4 w-4" />
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             ))}

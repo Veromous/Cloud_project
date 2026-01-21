@@ -35,7 +35,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 <div className="p-6 border-b border-white/10">
                     <Link href="/" className="flex items-center gap-2 font-bold text-xl">
                         <BarChart3 className="h-6 w-6 text-blue-500" />
-                        <span className="bg-gradient-to-r from-blue-400 to-violet-400 bg-clip-text text-transparent">
+                        <span className="bg-linear-to-r from-blue-400 to-violet-400 bg-clip-text text-transparent">
                             Sentilyze
                         </span>
                     </Link>
@@ -52,7 +52,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                                 className={clsx(
                                     "flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all group relative overflow-hidden",
                                     isActive
-                                        ? "text-white bg-gradient-to-r from-blue-500/20 to-violet-500/20 border border-white/10"
+                                        ? "text-white bg-linear-to-r from-blue-500/20 to-violet-500/20 border border-white/10"
                                         : "text-muted-foreground hover:text-white hover:bg-white/5"
                                 )}
                             >
@@ -85,7 +85,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     </h2>
                     <div className="flex items-center gap-4">
                         {/* User Profile Snippet would go here */}
-                        <div className="h-8 w-8 rounded-full bg-gradient-to-br from-blue-500 to-violet-500" />
+                        <div className="h-8 w-8 rounded-full bg-linear-to-br from-blue-500 to-violet-500" />
                     </div>
                 </header>
                 <div className="p-8 pb-20">

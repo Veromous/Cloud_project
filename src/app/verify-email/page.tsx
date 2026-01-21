@@ -73,7 +73,7 @@ function VerifyEmailContent() {
                         <div className="p-3 bg-green-500/10 rounded-full mb-4">
                             <Mail className="h-6 w-6 text-green-400" />
                         </div>
-                        <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
+                        <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-linear-to-r from-white to-gray-400">
                             Verify Your Email
                         </h1>
                         <p className="text-sm text-muted-foreground mt-2 text-center">
@@ -107,7 +107,7 @@ function VerifyEmailContent() {
                                     onChange={(e) => setCode(e.target.value)}
                                     placeholder="Enter 6-digit code"
                                     maxLength={6}
-                                    className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500/50 transition-all text-center text-2xl tracking-widest"
+                                    className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500/50 transition-all text-center tracking-widest"
                                 />
                             </div>
 
