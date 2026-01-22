@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, Link as LinkIcon, BarChart3, Settings, LogOut, MessageSquare } from "lucide-react";
+import { LayoutDashboard, Link as LinkIcon, BarChart3, Settings, LogOut, MessageSquare, User } from "lucide-react";
 import { clsx } from "clsx";
 import { authService } from "@/lib/auth";
+import { useEffect, useState } from "react";
 
 const sidebarItems = [
     { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
@@ -17,6 +18,20 @@ const sidebarItems = [
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
     const router = useRouter();
+    const [userInfo, setUserInfo] = useState<{ name?: string; email?: string }>({});
+
+    useEffect(() => {
+        const fetchUserData = async () => {
+            const result = await authService.getCurrentUser();
+            if (result.success) {
+                setUserInfo({
+                    name: result.name || result.email?.split('@')[0],
+                    email: result.email
+                });
+            }
+        };
+        fetchUserData();
+    }, []);
 
     const handleSignOut = async () => {
         try {
@@ -83,9 +98,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     <h2 className="text-lg font-medium text-white">
                         {sidebarItems.find(i => i.href === pathname)?.label || "Dashboard"}
                     </h2>
-                    <div className="flex items-center gap-4">
-                        {/* User Profile Snippet would go here */}
-                        <div className="h-8 w-8 rounded-full bg-linear-to-br from-blue-500 to-violet-500" />
+                    <div className="flex items-center gap-3">
+                        <div className="text-right">
+                            <div className="text-sm font-medium text-white">{userInfo.name || 'User'}</div>
+                            <div className="text-xs text-muted-foreground">{userInfo.email || ''}</div>
+                        </div>
+                        <div className="h-10 w-10 rounded-full bg-linear-to-br from-blue-500 to-violet-500 flex items-center justify-center text-white font-bold">
+                            {(userInfo.name || userInfo.email || 'U')[0].toUpperCase()}
+                        </div>
                     </div>
                 </header>
                 <div className="p-8 pb-20">

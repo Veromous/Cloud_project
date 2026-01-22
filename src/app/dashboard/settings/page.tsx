@@ -1,28 +1,87 @@
 "use client";
 
-import { useState } from "react";
-import { User, Mail, Bell, Shield, Save } from "lucide-react";
+import { useState, useEffect } from "react";
+import { User, Mail, Bell, Shield, Save, Eye, EyeOff } from "lucide-react";
+import { authService } from "@/lib/auth";
+import { updatePassword } from 'aws-amplify/auth';
+import toast, { Toaster } from 'react-hot-toast';
 
 export default function SettingsPage() {
-    const [name, setName] = useState("User");
-    const [email, setEmail] = useState("user@example.com");
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
+    const [showPasswordForm, setShowPasswordForm] = useState(false);
+    const [passwordData, setPasswordData] = useState({
+        oldPassword: "",
+        newPassword: "",
+        confirmPassword: ""
+    });
+    const [showPasswords, setShowPasswords] = useState({
+        old: false,
+        new: false,
+        confirm: false
+    });
     const [notifications, setNotifications] = useState({
         emailAlerts: true,
         weeklyReports: false,
         negativeAlerts: true,
     });
 
+    useEffect(() => {
+        const fetchUserData = async () => {
+            const result = await authService.getCurrentUser();
+            if (result.success) {
+                setName(result.name || result.email?.split('@')[0] || "");
+                setEmail(result.email || "");
+            }
+            setLoading(false);
+        };
+        fetchUserData();
+    }, []);
+
     const handleSave = async () => {
         setSaving(true);
-        // Simulate save
         await new Promise(resolve => setTimeout(resolve, 1000));
         setSaving(false);
-        alert("Settings saved successfully!");
+        toast.success("Settings saved successfully!");
     };
+
+    const handlePasswordChange = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        if (passwordData.newPassword !== passwordData.confirmPassword) {
+            toast.error("New passwords don't match!");
+            return;
+        }
+
+        if (passwordData.newPassword.length < 8) {
+            toast.error("Password must be at least 8 characters!");
+            return;
+        }
+
+        try {
+            await updatePassword({
+                oldPassword: passwordData.oldPassword,
+                newPassword: passwordData.newPassword
+            });
+
+            toast.success("Password changed successfully!");
+            setShowPasswordForm(false);
+            setPasswordData({ oldPassword: "", newPassword: "", confirmPassword: "" });
+        } catch (error: any) {
+            console.error("Password change error:", error);
+            toast.error(error.message || "Failed to change password");
+        }
+    };
+
+    if (loading) {
+        return <div className="text-center p-12 text-muted-foreground">Loading settings...</div>;
+    }
 
     return (
         <div className="space-y-6 max-w-3xl">
+            <Toaster position="top-right" />
             <div>
                 <h1 className="text-2xl font-bold tracking-tight">Account Settings</h1>
                 <p className="text-muted-foreground">Manage your account preferences and notifications.</p>
@@ -54,10 +113,11 @@ export default function SettingsPage() {
                             <input
                                 type="email"
                                 value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                className="w-full bg-black/20 border border-white/10 rounded-lg pl-10 pr-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
+                                disabled
+                                className="w-full bg-black/20 border border-white/10 rounded-lg pl-10 pr-4 py-2.5 text-sm text-gray-400 placeholder-gray-500 cursor-not-allowed"
                             />
                         </div>
+                        <p className="text-xs text-muted-foreground mt-1">Email cannot be changed</p>
                     </div>
                 </div>
             </div>
@@ -122,10 +182,98 @@ export default function SettingsPage() {
                     <h2 className="text-lg font-semibold">Security</h2>
                 </div>
 
-                <button className="w-full text-left p-3 rounded-lg hover:bg-white/5 transition-colors border border-white/10">
-                    <div className="font-medium text-sm">Change Password</div>
-                    <div className="text-xs text-muted-foreground">Update your password</div>
-                </button>
+                {!showPasswordForm ? (
+                    <button
+                        onClick={() => setShowPasswordForm(true)}
+                        className="w-full text-left p-3 rounded-lg hover:bg-white/5 transition-colors border border-white/10"
+                    >
+                        <div className="font-medium text-sm">Change Password</div>
+                        <div className="text-xs text-muted-foreground">Update your password</div>
+                    </button>
+                ) : (
+                    <form onSubmit={handlePasswordChange} className="space-y-4 border border-white/10 rounded-lg p-4">
+                        <div>
+                            <label className="text-sm font-medium text-gray-300 block mb-2">Current Password</label>
+                            <div className="relative">
+                                <input
+                                    type={showPasswords.old ? "text" : "password"}
+                                    value={passwordData.oldPassword}
+                                    onChange={(e) => setPasswordData({ ...passwordData, oldPassword: e.target.value })}
+                                    required
+                                    className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-2.5 pr-10 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500/50"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPasswords({ ...showPasswords, old: !showPasswords.old })}
+                                    className="absolute right-3 top-3 text-gray-400 hover:text-white"
+                                >
+                                    {showPasswords.old ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                </button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label className="text-sm font-medium text-gray-300 block mb-2">New Password</label>
+                            <div className="relative">
+                                <input
+                                    type={showPasswords.new ? "text" : "password"}
+                                    value={passwordData.newPassword}
+                                    onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
+                                    required
+                                    minLength={8}
+                                    className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-2.5 pr-10 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500/50"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPasswords({ ...showPasswords, new: !showPasswords.new })}
+                                    className="absolute right-3 top-3 text-gray-400 hover:text-white"
+                                >
+                                    {showPasswords.new ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                </button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label className="text-sm font-medium text-gray-300 block mb-2">Confirm New Password</label>
+                            <div className="relative">
+                                <input
+                                    type={showPasswords.confirm ? "text" : "password"}
+                                    value={passwordData.confirmPassword}
+                                    onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
+                                    required
+                                    minLength={8}
+                                    className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-2.5 pr-10 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500/50"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPasswords({ ...showPasswords, confirm: !showPasswords.confirm })}
+                                    className="absolute right-3 top-3 text-gray-400 hover:text-white"
+                                >
+                                    {showPasswords.confirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="flex gap-2">
+                            <button
+                                type="submit"
+                                className="flex-1 bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded-lg font-medium transition-all"
+                            >
+                                Change Password
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setShowPasswordForm(false);
+                                    setPasswordData({ oldPassword: "", newPassword: "", confirmPassword: "" });
+                                }}
+                                className="flex-1 bg-white/5 hover:bg-white/10 text-white px-4 py-2 rounded-lg font-medium transition-all"
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </form>
+                )}
             </div>
 
             {/* Save Button */}
