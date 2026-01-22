@@ -29,7 +29,7 @@ export default function Home() {
 
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48 relative overflow-hidden bg-amber-300 h-[94dvh]">
+        <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48 relative overflow-hidden h-[94dvh]">
             <div className="absolute inset-0 bg-blue-500/5 blur-[100px] rounded-full top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px]" />
             <div className="container px-4 md:px-6 relative z-10 mx-auto">
               <div className="flex flex-col items-center space-y-4 text-center">
