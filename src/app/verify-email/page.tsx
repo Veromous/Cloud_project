@@ -59,8 +59,8 @@ function VerifyEmailContent() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-background">
-            <div className="absolute inset-0 bg-green-500/5 blur-[100px] rounded-full top-1/4 left-1/4 w-[400px] h-[400px]" />
+        <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-black">
+            <div className="absolute inset-0  blur-[100px] rounded-full top-1/4 left-1/4 w-[400px] h-[400px]" />
 
             <div className="relative z-10 w-full max-w-md p-6">
                 <Link href="/register" className="inline-flex items-center text-sm text-muted-foreground hover:text-white mb-6 transition-colors">
@@ -68,18 +68,16 @@ function VerifyEmailContent() {
                     Back to Register
                 </Link>
 
-                <div className="bg-white/5 border border-white/10 backdrop-blur-xl rounded-2xl p-8 shadow-xl">
+                <div className="bg-white p-7.5 w-[450px]   rounded-2xl shadow-xl">
                     <div className="flex flex-col items-center mb-8">
-                        <div className="p-3 bg-green-500/10 rounded-full mb-4">
-                            <Mail className="h-6 w-6 text-green-400" />
-                        </div>
-                        <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-linear-to-r from-white to-gray-400">
+
+                        <h1 className="text-2xl font-bold bg-clip-text text-black">
                             Verify Your Email
                         </h1>
-                        <p className="text-sm text-muted-foreground mt-2 text-center">
+                        <p className="text-xl text-muted-foreground mt-2 text-black">
                             We sent a verification code to
                         </p>
-                        <p className="text-sm text-white font-medium mt-1">
+                        <p className="text-sm text-black font-medium mt-1">
                             {email}
                         </p>
                     </div>
@@ -96,9 +94,9 @@ function VerifyEmailContent() {
                     ) : (
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div className="space-y-2">
-                                <label className="text-sm font-medium text-gray-300" htmlFor="code">
-                                    Verification Code
-                                </label>
+                                <div className="flex flex-col">
+                                     <label className="text-gray-900 font-semibold"> Verification Code</label>
+                                </div>
                                 <input
                                     id="code"
                                     type="text"
@@ -107,7 +105,7 @@ function VerifyEmailContent() {
                                     onChange={(e) => setCode(e.target.value)}
                                     placeholder="Enter 6-digit code"
                                     maxLength={6}
-                                    className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500/50 transition-all text-center tracking-widest"
+                                    className="w-full bg-white border border-gray-400 rounded-lg px-4 py-2.5 text-sm text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500/50 transition-all text-center tracking-widest"
                                 />
                             </div>
 
@@ -120,7 +118,7 @@ function VerifyEmailContent() {
                             <button
                                 type="submit"
                                 disabled={loading || code.length !== 6}
-                                className="w-full bg-green-600 hover:bg-green-500 text-white font-medium py-2.5 rounded-lg shadow-lg shadow-green-500/20 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="w-full mt-5 mb-2.5 bg-gray-900 hover:bg-blue-500 text-white font-medium py-2.5 rounded-lg shadow-lg shadow-green-500/20 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 {loading ? "Verifying..." : "Verify Email"}
                             </button>
@@ -138,9 +136,9 @@ function VerifyEmailContent() {
                         </form>
                     )}
 
-                    <div className="mt-6 text-center text-sm text-muted-foreground">
+                    <div className="mt-6 text-center text-sm text-black">
                         Already verified?{" "}
-                        <Link href="/login" className="text-green-400 hover:text-green-300 transition-colors">
+                        <Link href="/login" className="text-blue-400 hover:text-green-300 transition-colors">
                             Sign in
                         </Link>
                     </div>
