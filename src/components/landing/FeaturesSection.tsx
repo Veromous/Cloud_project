@@ -7,8 +7,8 @@ export default function FeaturesSection() {
                 <div className="flex flex-col items-center justify-center space-y-4 text-center">
                     <div className="space-y-2">
                         <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">Intelligent Insights</h2>
-                        <p className="max-w-[900px] text-black  md:text-2xl/relaxed lg:text-3xl xl:text-xl/relaxed">
-                             <h2> Our platform leverages advanced AWS AI to process thousands of comments in seconds.</h2>
+                        <p className="max-w-[900px] text-black md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                            Our platform leverages advanced AWS AI to process thousands of comments in seconds.
                         </p>
                     </div>
                 </div>

@@ -61,8 +61,8 @@ export default function HeroSection() {
             <div className="container px-4 md:px-6 relative z-10 mx-auto">
                 <div className="flex flex-col items-center space-y-8 text-center animate-fade-in">
                     <div className="space-y-4">
-                        <h1 className="text-4xl text-black font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl/none text-balance">
-                             Experience lift off with Our next-generation Real-Time Sentiment <br className="hidden md:inline" />
+                        <h1 className="text-4xl text-black font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl/none text-balance font-[family-name:var(--font-outfit)]">
+                            Experience lift off with Our next-generation Real-Time Sentiment <br className="hidden md:inline" />
                             <span className="bg-linear-to-r from-blue-400 via-violet-400 to-fuchsia-400 bg-clip-text text-transparent animate-gradient">
                                 Analysis for Business
                             </span>

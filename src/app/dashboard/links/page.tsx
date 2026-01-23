@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Plus, Facebook, Youtube, Video, Trash2, ExternalLink, Music2, RefreshCw } from "lucide-react";
 import toast, { Toaster } from 'react-hot-toast';
+import YouTubeConnect from "@/components/dashboard/YouTubeConnect";
 
 export default function LinksPage() {
     const [links, setLinks] = useState<any[]>([]);
@@ -169,6 +170,9 @@ export default function LinksPage() {
                     Add New Link
                 </button>
             </div>
+
+            {/* YouTube OAuth Connection */}
+            <YouTubeConnect />
 
             <div className="bg-white/5 border border-white/10 rounded-xl overflow-hidden">
                 <div className="overflow-x-auto">
