@@ -9,6 +9,7 @@ export default function LinksPage() {
     const [links, setLinks] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [syncing, setSyncing] = useState<string | null>(null);
+    const [selectedLinks, setSelectedLinks] = useState<string[]>([]);
 
     // Fetch links from backend
     const fetchLinks = async () => {
@@ -145,6 +146,22 @@ export default function LinksPage() {
         }
     };
 
+    const handleSelectAll = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.checked) {
+            setSelectedLinks(links.map(link => link.id));
+        } else {
+            setSelectedLinks([]);
+        }
+    };
+
+    const handleSelectOne = (linkId: string) => {
+        setSelectedLinks(prev =>
+            prev.includes(linkId)
+                ? prev.filter(id => id !== linkId)
+                : [...prev, linkId]
+        );
+    };
+
     const getIcon = (platform: string) => {
         switch (platform) {
             case "facebook": return <Facebook className="h-5 w-5 text-blue-500" />;
@@ -162,13 +179,29 @@ export default function LinksPage() {
                     <h1 className="text-2xl font-bold tracking-tight">Social Media Links</h1>
                     <p className="text-muted-foreground">Manage the sources for your sentiment analysis.</p>
                 </div>
-                <button
-                    onClick={handleAddLink}
-                    className="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg font-medium transition-colors shadow-lg shadow-blue-500/20"
-                >
-                    <Plus className="h-4 w-4" />
-                    Add New Link
-                </button>
+                <div className="flex items-center gap-2">
+                    {selectedLinks.length > 0 && (
+                        <button
+                            onClick={() => {
+                                if (confirm(`Delete ${selectedLinks.length} selected links?`)) {
+                                    Promise.all(selectedLinks.map(id => handleDeleteLink(id)))
+                                        .then(() => setSelectedLinks([]));
+                                }
+                            }}
+                            className="flex items-center gap-2 bg-red-600/10 hover:bg-red-600/20 text-red-500 border border-red-600/20 px-4 py-2 rounded-lg font-medium transition-colors"
+                        >
+                            <Trash2 className="h-4 w-4" />
+                            Delete ({selectedLinks.length})
+                        </button>
+                    )}
+                    <button
+                        onClick={handleAddLink}
+                        className="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg font-medium transition-colors shadow-lg shadow-blue-500/20"
+                    >
+                        <Plus className="h-4 w-4" />
+                        Add New Link
+                    </button>
+                </div>
             </div>
 
             {/* YouTube OAuth Connection */}
@@ -179,6 +212,14 @@ export default function LinksPage() {
                     <table className="w-full text-sm text-left">
                         <thead className="bg-white/5 text-muted-foreground uppercase text-xs font-semibold">
                             <tr>
+                                <th className="px-6 py-4 w-4">
+                                    <input
+                                        type="checkbox"
+                                        className="rounded border-white/10 bg-white/5 text-blue-600 focus:ring-blue-500/20"
+                                        checked={links.length > 0 && selectedLinks.length === links.length}
+                                        onChange={handleSelectAll}
+                                    />
+                                </th>
                                 <th className="px-6 py-4">Platform</th>
                                 <th className="px-6 py-4">URL</th>
                                 <th className="px-6 py-4">Date Added</th>
@@ -187,9 +228,17 @@ export default function LinksPage() {
                         </thead>
                         <tbody className="divide-y divide-white/5">
                             {loading ? (
-                                <tr><td colSpan={4} className="p-6 text-center text-muted-foreground">Loading links...</td></tr>
+                                <tr><td colSpan={5} className="p-6 text-center text-muted-foreground">Loading links...</td></tr>
                             ) : links.map((link) => (
-                                <tr key={link.id} className="hover:bg-white/5 transition-colors">
+                                <tr key={link.id} className={`hover:bg-white/5 transition-colors ${selectedLinks.includes(link.id) ? 'bg-white/5' : ''}`}>
+                                    <td className="px-6 py-4">
+                                        <input
+                                            type="checkbox"
+                                            className="rounded border-white/10 bg-white/5 text-blue-600 focus:ring-blue-500/20"
+                                            checked={selectedLinks.includes(link.id)}
+                                            onChange={() => handleSelectOne(link.id)}
+                                        />
+                                    </td>
                                     <td className="px-6 py-4 flex items-center gap-3">
                                         <div className="p-2 rounded-lg bg-white/5">
                                             {getIcon(link.platform)}
